@@ -1,35 +1,11 @@
-# ConsoleTooter
-## 説明
-コンソールで作業中にちょっとTootしたくなったときに使えます      
-## コマンドの書式
-* toot [内容]       
-* command | toot --pipe                  
-* toot  
-### Option
-```
---help         helpを表示します                 
---direct       公開範囲、ダイレクトでtootします                              
---private      公開範囲、非公開でtootします                                      
---unlisted     公開範囲、未収載でtootします                                
---public       公開範囲、公開でtootします                                 
---cw           CWありでtootします
---pipe         パイプから取得した文字列をtootします
-```
-## 使い方
-1. まず適当にパスが通っている場所にtootを置きます
-2. お好きなインスタンスのアクセストークンを取得します
-3. ct.confを任意の内容に書き換えます
-4. ct.confを適当な場所に置きます
-5. tootの```. ./ct.conf```の部分をct.confの絶対パスに書き換えます
-6. コマンド感覚でTootできます
-## 欠点
-1. 通知が見れない
-2. シェルやcurlに突っ込むと怒られる内容は使えない
-3. 一部の文字列を""なしスペース区切りで投稿すると投稿内容がおかしくなる
-4. タイムラインなんてなかった
+# sou
 
-## Get_Api.shについて
-### 説明
-Get_Api.shは対話形式でAPIを取れるだけのshです
+sou is a [Mastodon](joinmastodon.org) client written in pure bash.
 
-使用する場合は自己責任でお願いします
+# Installation
+Run `confugure.sh` to set the API url.
+You'll have to get an access token from your instance and
+add it to `sou.conf`.
+
+# Features
+Currently, it just supports tooting.
