@@ -1,0 +1,114 @@
+#!/bin/sh
+
+. ./sou.conf
+
+show_help=1
+show_timeline=0
+get_cw=1
+f_pipe=1
+toot_as_parameter=""
+
+# Parse the arguments and manage the options
+for option in "$@"
+do
+	case "$option" in
+		'--help' )
+			show_help=0
+			;;
+		'--cw' )
+			get_cw=0
+			if [ ! -z "$2" ]; then
+				shift
+			fi
+			;;
+		'--pipe' )
+			f_pipe=0
+			if [ ! -z "$2" ]; then
+				shift
+			fi
+			;;
+		'--show-timeline' )
+			show_timeline=1
+			;;
+		'--direct' )
+			visibility="direct"
+			echo "Tooting as a direct toot..."			
+			if [ ! -z "$2" ]; then
+				shift
+			fi
+			;;
+		'--private' )
+			visibility="private"
+			echo "Tooting as a private toot..."
+			if [ ! -z "$2" ]; then
+				shift
+			fi
+			;;
+		'--unlisted' )
+			visibility="unlisted"
+			echo "Tooting as unlisted..."
+			if [ ! -z "$2" ]; then
+				shift
+			fi
+			;;
+		'--public' )
+			visibility="public"
+			echo "Tooting publically..."
+			if [ ! -z "$2" ]; then
+				shift
+			fi
+			;;
+		*)
+			if [ ! -z "$1" ]; then # just the toot as arg1
+				tmp=`echo $toot_as_parameter`
+				toot_as_parameter=`echo "$tmp $1"`
+				echo "Tooting $toot_as_parameter"; #toot_as_parameter
+			fi
+			;;
+	esac
+done
+
+if [ $show_help = "0" ]; then # show help
+	echo -e "sou - a very minimal mastodon client \n"
+	echo "Current visibility: $visibility"
+	echo "command | toot --pipe"
+
+	echo -e "--help \n \t Print this help"
+	echo -e "--cw \n \t Specify the content warning."
+	echo -e "	  \n \t Example : \$sou "toot" --cw \"my cw\""
+	echo "--pipe"
+	echo -e "	  \n \t command | toot --pipe"
+
+
+	echo -e "\nOther visibility options:"
+	echo "--direct"
+	echo -e "		  \n \t Post as a direct message (to yourself)"
+	echo "--private"
+	echo -e "		  \n \t Post as a private toot"
+	echo "--unlisted"
+	echo -e "		  \n \t Post as an unlisted toot"
+	echo "--public"
+	echo -e "		  \n \t Post as a public toot"
+	exit 0
+fi
+
+if [ $show_timeline = "1" ]; then # show timeline
+	curl -s "$url_timeline" --header "Authorization: Bearer $token" -w '%{http_code}'
+	exit 0
+fi
+
+
+if [ $get_cw = "0" ]; then # if --cw
+	echo "Please Input CW Text"
+	read CW
+	if [ -z "$CW" ]; then #
+		CW=`echo "$default_cw"`
+	fi
+	curl -F "status=$toot_as_parameter" -F "visibility=$visibility" -F "spoiler_text=$CW" -sS "$url" --header "Authorization: Bearer $token" -o /dev/null -w 'HTTP Request status : %{http_code}'
+else
+	curl -F "status=$toot_as_parameter" -F "visibility=$visibility" -sS "$url" --header "Authorization: Bearer $token" -o /dev/null -w '%{http_code}'
+fi
+echo -e "\nTooted!"
+
+
+exit 0
